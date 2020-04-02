@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ObjectInput;
+import java.io.*;
 
 public class RubricaTelefonica extends JPanel implements ActionListener
 {
@@ -10,7 +10,7 @@ public class RubricaTelefonica extends JPanel implements ActionListener
     JLabel titolo;
     JList lista;
     DefaultListModel model;
-    JButton inserisci, elimina;
+    JButton inserisci, elimina, salvaRubrica, caricaRubrica;
 
     //Inserisci contatto
     NominativoFrame nomF;
@@ -34,6 +34,10 @@ public class RubricaTelefonica extends JPanel implements ActionListener
             inserisci.setBounds(20,490,100,30);
         elimina = new JButton("Elimina");
             elimina.setBounds(305,490,100,30);
+        salvaRubrica = new JButton("Salva");
+            salvaRubrica.setBounds(20,550,100,30);
+        caricaRubrica = new JButton("Carica");
+            caricaRubrica.setBounds(305,550,100,30);
 
         //Inserisci contatto
         nomF = new NominativoFrame("NOMINATIVO");
@@ -62,6 +66,8 @@ public class RubricaTelefonica extends JPanel implements ActionListener
         add(lista);
         add(inserisci);
         add(elimina);
+        add(salvaRubrica);
+        add(caricaRubrica);
 
         //Inserisci contatto
         nomP.setLayout(new GridLayout(7,3));
@@ -77,6 +83,8 @@ public class RubricaTelefonica extends JPanel implements ActionListener
         //Rubrica
         inserisci.addActionListener(this);
         elimina.addActionListener(this);
+        salvaRubrica.addActionListener(this);
+        caricaRubrica.addActionListener(this);
 
         //Inserisci contatto
         aggiungi.addActionListener(this);
@@ -91,7 +99,6 @@ public class RubricaTelefonica extends JPanel implements ActionListener
             {
                 nomF.setVisible(true);
             }
-
         }
 
         if(pulsantePremuto==aggiungi)
@@ -136,5 +143,43 @@ public class RubricaTelefonica extends JPanel implements ActionListener
                 model.remove(indice);
             }
         }
+
+        if(pulsantePremuto==salvaRubrica)
+        {
+            try {
+                salvaRubrica();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if(pulsantePremuto==caricaRubrica)
+        {
+            try {
+                caricaRubrica();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public void salvaRubrica() throws IOException
+    {
+        ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream("rubrica.bin"));
+        stream.writeObject(this.model);
+        stream.close();
+    }
+
+    public void caricaRubrica() throws IOException
+    {
+        ObjectInputStream stream = new ObjectInputStream(new FileInputStream("rubrica.bin"));
+        try
+        {
+            this.model = (DefaultListModel)stream.readObject();
+            this.lista.setModel(model);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        stream.close();
     }
 }

@@ -7,7 +7,7 @@ public class MyFrame extends JFrame
     {
         super(titolo);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setBounds(30,30,440,580);
+        setBounds(30,30,440,700);
         setResizable(false);
     }
 
